@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Server port="8905" shutdown="SHUTDOWN">
+<Listener className="org.apache.catalina.startup.VersionLoggerListener" />
+<Listener className="org.apache.catalina.core.AprLifecycleListener" SSLEngine="on" />
+<Listener className="org.apache.catalina.core.JreMemoryLeakPreventionListener" />
+<Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener" />
+<Listener className="org.apache.catalina.core.ThreadLocalLeakPreventionListener" />
+
+<GlobalNamingResources>
+    <Resource name="UserDatabase" auth="Container"
+              type="org.apache.catalina.UserDatabase"
+              description="User database that can be updated and saved"
+              factory="org.apache.catalina.users.MemoryUserDatabaseFactory"
+              pathname="conf/tomcat-users.xml" />
+</GlobalNamingResources>
+<Service name="Catalina">
+
+    <Connector port="8943" protocol="org.apache.coyote.http11.Http11NioProtocol"
+               maxThreads="150" SSLEnabled="true" scheme="https" secure="true"
+               clientAuth="true" sslProtocol="SSL"
+               truststoreFile="/home/manmon-uploader/.auth/cacerts.jks" truststorePass="nmkvaQsKmnasvmklvan25489Anbma"
+               keyAlias="tomcat" keystoreFile="/home/manmon-uploader/.auth/.mycert.p12"
+               keystorePass="njbkqonhjkavbnjawba3156vanABnjknAbnjkoklga" />
+
+    <Engine name="Catalina" defaultHost="localhost">
+        <Realm className="org.apache.catalina.realm.LockOutRealm">
+            <Realm className="org.apache.catalina.realm.UserDatabaseRealm"
+                   resourceName="UserDatabase"/>
+        </Realm>
+
+        <Host name="localhost"  appBase="webapps"
+              unpackWARs="true" autoDeploy="true">
+            <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"
+                   prefix="localhost_access_log" suffix=".txt"
+                   pattern="%h %l %u %t &quot;%r&quot; %s %b" />
+
+        </Host>
+    </Engine>
+</Service>
+</Server>
+

@@ -1,0 +1,9 @@
+Package: manmon-conf
+Version: 1.0-1
+Architecture: all
+Maintainer: Tomi Malkki <tomi@malkki.eu>
+Provides: manmon-conf
+Section: python
+Priority: optional
+Homepage: https://manmon.net
+Description: Manmon Agent configuration
