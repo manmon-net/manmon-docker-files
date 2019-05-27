@@ -1,3 +1,8 @@
+if [ -z "$1" ]
+then
+  echo "Give upload server hostname as parameter"
+  exit 1
+fi
 if ! id -u manmon_zk > /dev/null 2>&1; then
   useradd -M -N -u 10002 manmon_zk
 fi
@@ -23,7 +28,7 @@ if ! id -u mmagent > /dev/null 2>&1; then
   useradd -M -N -u 10010 mmagent
 fi
 
-if [ -d /home/manmon-certs/.certs ]
+if [ ! -d /home/manmon-certs/.certs ]
   docker run --rm -v /home/manmon-data/manmon-certs/.certs/:/home/manmon-certs/.certs/ -v /home/manmon-data/manmon-certs/conf:/home/manmon-certs/conf --name manmon-certs-tmp -it manmon/manmon-certs:latest /home/manmon-certs/gen_keys.sh
 fi
 

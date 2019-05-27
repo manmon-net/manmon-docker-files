@@ -1,5 +1,5 @@
 #!/bin/bash
-if [ `ls -l /home/manmon-certs/.certs | wc -l` -gt 0 ]
+if [ `find /home/manmon-certs/.certs/ -type f | wc -l` -gt 0 ]
 then
   echo "There is already certificates in destination directory"
   exit 1
@@ -15,6 +15,7 @@ then
   echo "No UPLOADSERVERNAME variable"
   exit 1
 fi
+UPLOADSERVERNAME=`echo $UPLOADSERVERNAME | sed 's/^https:\/\///' |sed -e "s/:[0-9]*$//"`
 if [ -z "$CAPASSWORD" ]
 then
   echo "No CAPASSWORD variable"
