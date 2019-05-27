@@ -3,6 +3,11 @@ then
   echo "Give upload server hostname as parameter"
   exit 1
 fi
+if [ `echo "$1" | grep -c "^https:"` -eq 0 ]
+then
+  echo "Server parameter has to start with https://"
+  exit 1
+fi
 if ! id -u manmon_zk > /dev/null 2>&1; then
   useradd -M -N -u 10002 manmon_zk
 fi
