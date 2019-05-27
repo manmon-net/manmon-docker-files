@@ -11,6 +11,7 @@ Group: Development/Libraries
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 Prefix: %{_prefix}
 BuildArch: noarch
+Provides: manmon-conf
 Vendor: Tomi Malkki <tomi@manmon.net>
 Url: https://manmon.net/
 

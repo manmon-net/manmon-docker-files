@@ -32,7 +32,7 @@ then
 fi
 cd /home/mmagent/.tmp
 mkdir -p /home/mmagent/rpmbuild/SOURCES
-cp /home/mmagent/tmp/var/lib/manmon/.m* /home/mmagent/rpmbuild/SOURCES
+cp /home/mmagent/.tmp/var/lib/manmon/.m* /home/mmagent/rpmbuild/SOURCES
 if [ ! -f /home/manmon-conf/.constants ]
 then
   python /home/mmagent/generate_constants.py "$UPLOADHOST" 
@@ -40,7 +40,7 @@ then
 fi
 rm -f /home/mmagent/rpmbuild/SOURCES/.constants
 cp -p /home/manmon-conf/.constants /home/mmagent/rpmbuild/SOURCES/
-rpmbuild --define "name manmon-conf-${CONFNAME}" --define "version ${VER}" --define "release ${RELEASE}" -ba manmon-conf.spec >/dev/null 2>/dev/null
+rpmbuild --define "name manmon-conf-${CONFNAME}" --define "version ${VER}" --define "release ${RELEASE}" -ba /home/mmagent/manmon-conf.spec >/dev/null 2>/dev/null
 if [ "$?" -ne 0 ]
 then 
   echo "Error building RPM package"
