@@ -28,11 +28,10 @@ fi
 if [ -f /home/manmon-conf/manmon-conf-${CONFNAME}-${VER}-${RELEASE}.noarch.rpm ]
 then
   echo "Package with same name manmon-conf-${CONFNAME}-${VER}-${RELEASE}.noarch.rpm exists" 
-  exit 1
+  exit 0
 fi
 cd /home/mmagent/.tmp
 mkdir -p /home/mmagent/rpmbuild/SOURCES
-cp /home/mmagent/.tmp/var/lib/manmon/.m* /home/mmagent/rpmbuild/SOURCES
 if [ ! -f /home/manmon-conf/.constants ]
 then
   python /home/mmagent/generate_constants.py "$UPLOADHOST" 

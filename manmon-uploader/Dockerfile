@@ -13,7 +13,6 @@ RUN useradd -N -m -u 10006 manmon-uploader \
  && ln -s /home/manmon-uploader/conf/server.xml /home/manmon-tomcat/tomcat/conf/server.xml 
 
 EXPOSE 8943
-EXPOSE 8080
 USER manmon-uploader
 
 ENV CATALINA_OPTS="-Xms512m -Xmx2048m"

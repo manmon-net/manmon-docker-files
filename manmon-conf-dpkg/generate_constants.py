@@ -2,6 +2,7 @@ import random
 import string
 import json
 import sys
+import os
 
 def getRandom(length):
     chars = string.ascii_letters + string.digits + string.punctuation
@@ -30,13 +31,15 @@ def jsonDefEncoder(obj):
 
 
 constants=Constants()
-f = open("/home/manmon-conf/.constants","w")
-f.write(json.dumps(constants,default=jsonDefEncoder))
-f.flush()
-f.close
-tomcatConstants=TomcatConstants(constants.xout,constants.xin)
-f = open("/home/manmon-conf/.tomcat_constants","w")
-f.write(json.dumps(tomcatConstants,default=jsonDefEncoder))
-f.flush()
-f.close
+if not os.path.isfile("/home/manmon-conf/.constants"):
+    f = open("/home/manmon-conf/.constants","w")
+    f.write(json.dumps(constants,default=jsonDefEncoder))
+    f.flush()
+    f.close
+if not os.path.isfile("/home/manmon-conf/.tomcat_constants"):
+    tomcatConstants=TomcatConstants(constants.xout,constants.xin)
+    f = open("/home/manmon-conf/.tomcat_constants","w")
+    f.write(json.dumps(tomcatConstants,default=jsonDefEncoder))
+    f.flush()
+    f.close
 

@@ -2,7 +2,7 @@
 if [ `find /home/manmon-certs/.certs/ -type f | wc -l` -gt 0 ]
 then
   echo "There is already certificates in destination directory"
-  exit 1
+  exit 0
 fi
 if [ ! -f /home/manmon-certs/conf/constants ]
 then
@@ -113,9 +113,8 @@ fi
 
 rm -f uploader-server.xml
 cp -p uploader-server.xml.original uploader-server.xml
-perl -p -i -e "s/dgajlkEbajknAB32jnkcaop20/$TRUSTSTOREPASS/" uploader-server.xml
-perl -p -i -e "s/bnamnjAWnkha4623lVmxZ8fG/$KEYSTOREPASS/" uploader-server.xml
-
+perl -p -i -e "s/njbkqonhjkavbnjawba3156vanABnjknAbnjkoklga/$TRUSTSTOREPASS/" uploader-server.xml
+perl -p -i -e "s/nmkvaQsKmnasvmklvan25489Anbma/$KEYSTOREPASS/" uploader-server.xml
 cp ca.* /home/manmon-certs/.certs
 cp cacerts.jks /home/manmon-certs/.certs
 cp client1.* /home/manmon-certs/.certs
@@ -125,4 +124,4 @@ cp uploader-server.xml /home/manmon-certs/.certs
 cd ..
 rm -rf /home/manmon-certs/tmp
 
-echo "Certificate succesfully created"
+echo "Certificates and keys succesfully created"
