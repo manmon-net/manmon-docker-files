@@ -22,6 +22,11 @@
                keyAlias="tomcat" keystoreFile="/home/manmon-uploader/.auth/.mycert.p12"
                keystorePass="njbkqonhjkavbnjawba3156vanABnjknAbnjkoklga" />
 
+    <Connector executor="tomcatThreadPool"
+               address="127.0.0.1" port="8080" protocol="HTTP/1.1"
+               connectionTimeout="20000"
+               redirectPort="8443" />
+
     <Engine name="Catalina" defaultHost="localhost">
         <Realm className="org.apache.catalina.realm.LockOutRealm">
             <Realm className="org.apache.catalina.realm.UserDatabaseRealm"
