@@ -1,7 +1,7 @@
 FROM manmon/manmon-openjdk-8-jre
 
-RUN useradd -N -m -u 10012 manmon-data-loader
-USER manmon-data-loader
+RUN useradd -N -m -u 100012 manmon_data_loader
+USER manmon_data_loader
 
-ADD run-data-loader.sh /home/manmon-data-loader/run-data-loader.sh
-CMD ["/home/manmon-data-loader/run-data-loader.sh"]
+ADD run-data-loader.sh /home/manmon_data_loader/run-data-loader.sh
+CMD ["/home/manmon_data_loader/run-data-loader.sh"]

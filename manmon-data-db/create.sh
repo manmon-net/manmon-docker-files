@@ -1,2 +1,2 @@
-cd ../pg10
-docker build --build-arg userid=10011 --build-arg username=manmon_data_db -t manmon/manmon-data-db .
+cd ../pg11
+docker build --build-arg username=manmon_data_db --build-arg userid=100011 -t manmon/manmon-data-db .

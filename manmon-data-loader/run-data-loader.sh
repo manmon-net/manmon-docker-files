@@ -16,5 +16,5 @@ if [ `cat /proc/uptime | awk '{print sprintf("%.0f", $1)}'` -lt 100 ]
 then
   sleep 20
 fi
-java -jar /home/manmon-data-loader/jar/manmon-dbloader.jar
+java -jar /home/manmon_data_loader/jar/manmon-dbloader.jar
 

@@ -1,0 +1,17 @@
+manmon-openjdk-8-jre
+manmon-auth
+manmon-auth-db
+manmon-certs
+manmon-conf-dpkg
+manmon-conf-rpm
+manmon-data
+manmon-data-db
+manmon-data-loader
+manmon-hosts
+manmon-hosts-db
+manmon-kafka
+manmon-mib
+manmon-mib-db
+manmon-uploader
+manmon-uploader-db
+manmon-zookeeper

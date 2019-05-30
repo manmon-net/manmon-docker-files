@@ -1,7 +1,6 @@
-FROM ubuntu:18.04
+FROM manmon/manmon-openjdk-8-jre
 
-RUN apt-get update && apt-get install -y openjdk-8-jre-headless wget && apt-get clean
-RUN useradd -m -u 10003 -N manmon_kafka
+RUN useradd -m -u 100003 -N manmon_kafka
 RUN wget -q -O /tmp/kafka.tar.gz http://www.nic.funet.fi/pub/mirrors/apache.org/kafka/2.2.0/kafka_2.12-2.2.0.tgz \
  && cd /home/manmon_kafka \ 
  && tar xzf /tmp/kafka.tar.gz \
@@ -16,6 +15,9 @@ ADD server.properties /home/manmon_kafka/kafka/config/server.properties
 
 EXPOSE 9092
 
+ADD manmon-java-agent-1.0.jar /opt/manmon-java-agent-1.0.jar
+
 USER manmon_kafka
+ENV KAFKA_OPTS="-javaagent:/opt/manmon-java-agent-1.0.jar"
 CMD ["/home/manmon_kafka/kafka/bin/kafka-server-start.sh", "/home/manmon_kafka/kafka/config/server.properties"]
 

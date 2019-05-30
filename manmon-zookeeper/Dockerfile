@@ -1,7 +1,6 @@
-FROM ubuntu:18.04
+FROM manmon/manmon-openjdk-8-jre
 
-RUN apt-get update && apt-get install -y openjdk-8-jre-headless wget && apt-get clean
-RUN useradd -m -u 10002 -N manmon_zk
+RUN useradd -m -u 100002 -N manmon_zk
 RUN wget -q -O /tmp/zookeeper.tar.gz http://www.nic.funet.fi/pub/mirrors/apache.org/zookeeper/stable/apache-zookeeper-3.5.5-bin.tar.gz \
  && cd /home/manmon_zk \ 
  && tar xzf /tmp/zookeeper.tar.gz \ 

@@ -31,14 +31,14 @@ def jsonDefEncoder(obj):
 
 
 constants=Constants()
-if not os.path.isfile("/home/manmon-conf/.constants"):
-    f = open("/home/manmon-conf/.constants","w")
+if not os.path.isfile("/home/manmon_conf/.constants"):
+    f = open("/home/manmon_conf/.constants","w")
     f.write(json.dumps(constants,default=jsonDefEncoder))
     f.flush()
     f.close
-if not os.path.isfile("/home/manmon-conf/.tomcat_constants"):
+if not os.path.isfile("/home/manmon_conf/.tomcat_constants"):
     tomcatConstants=TomcatConstants(constants.xout,constants.xin)
-    f = open("/home/manmon-conf/.tomcat_constants","w")
+    f = open("/home/manmon_conf/.tomcat_constants","w")
     f.write(json.dumps(tomcatConstants,default=jsonDefEncoder))
     f.flush()
     f.close

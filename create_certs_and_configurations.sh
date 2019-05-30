@@ -33,7 +33,7 @@ if ! id -u mmagent > /dev/null 2>&1; then
   useradd -M -N -u 10010 mmagent
 fi
 
-if [ ! -d /home/manmon-certs/.certs ]
-  docker run --rm -v /home/manmon-data/manmon-certs/.certs/:/home/manmon-certs/.certs/ -v /home/manmon-data/manmon-certs/conf:/home/manmon-certs/conf --name manmon-certs-tmp -it manmon/manmon-certs:latest /home/manmon-certs/gen_keys.sh
+if [ ! -d /home/manmon_certs/.certs ]
+  docker run --rm -v /home/manmon-data/manmon_certs/.certs/:/home/manmon-certs/.certs/ -v /home/manmon-data/manmon-certs/conf:/home/manmon-certs/conf --name manmon-certs-tmp -it manmon/manmon-certs:latest /home/manmon_certs/gen_keys.sh
 fi
 

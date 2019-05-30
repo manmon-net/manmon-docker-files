@@ -1,15 +1,15 @@
 #!/bin/bash
-if [ `find /home/manmon-certs/.certs/ -type f | wc -l` -gt 0 ]
+if [ `find /home/manmon_certs/.certs/ -type f | wc -l` -gt 0 ]
 then
   echo "There is already certificates in destination directory"
   exit 0
 fi
-if [ ! -f /home/manmon-certs/conf/constants ]
+if [ ! -f /home/manmon_certs/conf/constants ]
 then
   echo "No constants file"
   exit 1
 fi
-source /home/manmon-certs/conf/constants
+source /home/manmon_certs/conf/constants
 if [ -z "$UPLOADSERVERNAME" ]
 then
   echo "No UPLOADSERVERNAME variable"
@@ -52,8 +52,8 @@ then
   exit 1
 fi
 
-mkdir -p /home/manmon-certs/tmp
-cd /home/manmon-certs/tmp
+mkdir -p /home/manmon_certs/tmp
+cd /home/manmon_certs/tmp
 openssl genrsa -des3 -out ca.key -passout pass:$CAPASSWORD 4096 > /dev/null 2>/dev/null
 if [ "$?" -ne 0 ]
 then
@@ -115,13 +115,13 @@ rm -f uploader-server.xml
 cp -p uploader-server.xml.original uploader-server.xml
 perl -p -i -e "s/njbkqonhjkavbnjawba3156vanABnjknAbnjkoklga/$TRUSTSTOREPASS/" uploader-server.xml
 perl -p -i -e "s/nmkvaQsKmnasvmklvan25489Anbma/$KEYSTOREPASS/" uploader-server.xml
-cp ca.* /home/manmon-certs/.certs
-cp cacerts.jks /home/manmon-certs/.certs
-cp client1.* /home/manmon-certs/.certs
-cp mycert.p12 /home/manmon-certs/.certs
-cp server.* /home/manmon-certs/.certs
-cp uploader-server.xml /home/manmon-certs/.certs
+cp ca.* /home/manmon_certs/.certs
+cp cacerts.jks /home/manmon_certs/.certs
+cp client1.* /home/manmon_certs/.certs
+cp mycert.p12 /home/manmon_certs/.certs
+cp server.* /home/manmon_certs/.certs
+cp uploader-server.xml /home/manmon_certs/.certs
 cd ..
-rm -rf /home/manmon-certs/tmp
+rm -rf /home/manmon_certs/tmp
 
 echo "Certificates and keys succesfully created"
