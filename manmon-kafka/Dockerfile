@@ -18,6 +18,6 @@ EXPOSE 9092
 ADD manmon-java-agent-1.0.jar /opt/manmon-java-agent-1.0.jar
 
 USER manmon_kafka
-ENV KAFKA_OPTS="-javaagent:/opt/manmon-java-agent-1.0.jar"
+ENV KAFKA_OPTS="-javaagent:/opt/manmon-java-agent-1.0.jar -Xmx1800m"
 CMD ["/home/manmon_kafka/kafka/bin/kafka-server-start.sh", "/home/manmon_kafka/kafka/config/server.properties"]
 

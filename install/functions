@@ -387,7 +387,9 @@ if [ `docker ps -a -q -f "name=manmon-kafka$"|wc -l` -eq 1 ]
     echo "Container manmon-kafka exists already - not creating"
   else
     create-kafka-dirs
-    docker run --restart unless-stopped --cpu-period=100000 --cpu-quota=100000 --net manmon --ip ${IP_PREFIX}.22 -it -d -m 2048m -v ${DATA_DIR}/manmon_kafka/data:/home/manmon_kafka/data -v ${DATA_DIR}/manmon_kafka/logs:/home/manmon_kafka/kafka/logs --name manmon-kafka manmon/manmon-kafka >/dev/null  2>/dev/null 
+    docker run --restart unless-stopped --cpu-period=100000 --cpu-quota=100000 --net manmon --ip ${IP_PREFIX}.22 -it -d -m 2048m -v ${DATA_DIR}/manmon_kafka/data:/home/manmon_kafka/data -v ${DATA_DIR}/manmon_kafka/logs:/home/manmon_kafka/kafka/logs \
+      -v ${DATA_DIR}/java-agent/manmon_kafka:/var/lib/manmon-java-agent/manmon_kafka \
+      --name manmon-kafka manmon/manmon-kafka >/dev/null  2>/dev/null 
     if [ "$?" -ne 0 ]
     then
       echo "Error creating container manmon-kafka"
@@ -435,7 +437,6 @@ create-data-loader-dirs() {
   then
     chcon -Rt svirt_sandbox_file_t ${DATA_DIR}/manmon_${DIRAPP}
   fi
-  download-manmon-data-loader
 }
 
 download-manmon-data-loader() {
