@@ -111,6 +111,7 @@ create-tomcat-container() {
     echo "Creating application container ${APP}"
     docker run --restart unless-stopped --cpu-period=100000 --cpu-quota=200000 -it -d -m 2560m \
       -v ${DATA_DIR}/manmon_${APP}/webapps:/home/manmon_${APP}/tomcat/webapps --name manmon-${APP} --net manmon \
+      -v ${DATA_DIR}/manmon_${APP}/logs:/home/manmon_${APP}/tomcat/logs \
       -v ${DATA_DIR}/java-agent/manmon_${APP}:/var/lib/manmon-java-agent/manmon_${APP} \
       --ip ${IP_PREFIX}.${IP_END} manmon/manmon-${APP}:latest >/dev/null 2>/dev/null
     if [ "$?" -ne 0 ]
@@ -136,7 +137,7 @@ create-uploader-container() {
     docker run --restart unless-stopped --cpu-period=100000 --cpu-quota=200000 -it -d -m 2560m \
       -v ${DATA_DIR}/manmon_${APP}/logs:/home/manmon_${APP}/tomcat/logs \
       -v ${DATA_DIR}/manmon_${APP}/.auth/:/home/manmon_${APP}/.auth \
-      -v ${DATA_DIR}/manmon_${APP}/conf:/home/manmon_${APP}/tomcat/conf \
+      -v ${DATA_DIR}/manmon_${APP}/conf:/home/manmon_${APP}/conf \
       -v ${DATA_DIR}/manmon_${APP}/webapps:/home/manmon_${APP}/tomcat/webapps \
       -v ${DATA_DIR}/java-agent/manmon_${APP}:/var/lib/manmon-java-agent/manmon_${APP} \
       --net manmon --ip ${IP_PREFIX}.${IP_END} --name manmon-${APP} manmon/manmon-${APP}:latest >/dev/null 2>/dev/null
@@ -336,9 +337,13 @@ create-kafka-dirs() {
   chmod 700 ${DATA_DIR}/manmon_kafka
   chmod 700 ${DATA_DIR}/manmon_kafka/data
   chmod 700 ${DATA_DIR}/manmon_kafka/logs
+  mkdir -p  ${DATA_DIR}/java-agent/manmon_kafka
+  chown manmon_kafka ${DATA_DIR}/java-agent/manmon_kafka
+  chmod 700 ${DATA_DIR}/java-agent/manmon_kafka
   if $SELINUXENABLED
   then
     chcon -Rt svirt_sandbox_file_t ${DATA_DIR}/manmon_kafka/
+    chcon -Rt svirt_sandbox_file_t ${DATA_DIR}/java-agent/manmon_kafka
   fi
 }
 

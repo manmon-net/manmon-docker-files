@@ -1,6 +1,7 @@
 #!/bin/bash
 
-for container in `cat build_containers`
+cd ../
+for container in `cat build/build_containers`
 do
   cd $container
   echo "Building $container"

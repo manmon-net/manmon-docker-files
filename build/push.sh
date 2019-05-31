@@ -1,6 +1,7 @@
 #!/bin/bash
 
-for container in `cat build_containers`
+cd ../
+for container in `cat build/build_containers`
 do
   echo "Pushing $container to Docker Hub"
   docker push manmon/$container >/dev/null 2>/dev/null

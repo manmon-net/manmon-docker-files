@@ -1,4 +1,6 @@
+#!/bin/bash
 . functions
+
 echo "Creating users"
 create-users
 
