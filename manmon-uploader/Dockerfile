@@ -9,7 +9,7 @@ RUN wget -q -O /tmp/tomcat.tar.gz http://www.nic.funet.fi/pub/mirrors/apache.org
  && rm -f /tmp/tomcat.tar.gz \
  && rm -rf /home/manmon-tomcat/tomcat/webapps/* \
  && chmod o+rx /home/manmon-tomcat/tomcat/bin /home/manmon-tomcat/tomcat/conf /home/manmon-tomcat/tomcat/lib /home/manmon-tomcat/tomcat/bin/*.sh \
- && chmod -R o+r /home/manmon-tomcat/tomcat/bin /home/manmon-tomcat/tomcat/conf /home/manmon-tomcat/tomcat/lib 
+ && chmod -R o+r /home/manmon-tomcat/tomcat/bin /home/manmon-tomcat/tomcat/conf /home/manmon-tomcat/tomcat/lib \ 
  && chmod o+x /home/manmon-tomcat/tomcat/bin /home/manmon-tomcat/tomcat/conf /home/manmon-tomcat/tomcat/lib
 
 RUN useradd -N -m -u 100006 manmon_uploader \

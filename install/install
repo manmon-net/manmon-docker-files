@@ -1,6 +1,9 @@
 #!/bin/bash
 . functions
 
+#create-hosts-container
+create-uploader-container
+exit 0
 echo "Creating users"
 create-users
 

@@ -78,9 +78,9 @@ create-manmon-dirs() {
   chown manmon_${DIRAPP} ${DATA_DIR}/manmon_${DIRAPP}/webapps
   chown manmon_${DIRAPP} ${DATA_DIR}/manmon_${DIRAPP}/logs
   chmod 700 ${DATA_DIR}/manmon_${DIRAPP}/logs
-  mkdir -p ${DATA_DIR}/java-agent/manmon_${DIRAPP}
-  chmod 700 ${DATA_DIR}/java-agent/manmon_${DIRAPP}
-  chown manmon_${DIRAPP} ${DATA_DIR}/java-agent/manmon_${DIRAPP}
+  mkdir -p ${DATA_DIR}/java-agent/manmon-${DIRAPP}
+  chmod 700 ${DATA_DIR}/java-agent/manmon-${DIRAPP}
+  chown manmon_${DIRAPP} ${DATA_DIR}/java-agent/manmon-${DIRAPP}
   if $SELINUXENABLED
   then
     chcon -Rt svirt_sandbox_file_t ${DATA_DIR}/manmon_${DIRAPP}
@@ -112,7 +112,7 @@ create-tomcat-container() {
     docker run --restart unless-stopped --cpu-period=100000 --cpu-quota=200000 -it -d -m 2560m \
       -v ${DATA_DIR}/manmon_${APP}/webapps:/home/manmon_${APP}/tomcat/webapps --name manmon-${APP} --net manmon \
       -v ${DATA_DIR}/manmon_${APP}/logs:/home/manmon_${APP}/tomcat/logs \
-      -v ${DATA_DIR}/java-agent/manmon_${APP}:/var/lib/manmon-java-agent/manmon_${APP} \
+      -v ${DATA_DIR}/java-agent/manmon-${APP}:/var/lib/manmon-java-agent/manmon_${APP} \
       --ip ${IP_PREFIX}.${IP_END} manmon/manmon-${APP}:latest >/dev/null 2>/dev/null
     if [ "$?" -ne 0 ]
     then
@@ -124,6 +124,33 @@ create-tomcat-container() {
     download-war "$APP"
   fi
 }
+
+create-hosts-container() {
+  APP="hosts"
+  IP_END="56"
+  if [ `docker ps -a -q -f "name=manmon-${APP}$"|wc -l` -eq 1 ]
+  then
+    echo "Container manmon-${APP} exists already - not creating"
+  else
+    create-hosts-dirs-and-copy-keys
+    echo "Creating application container ${APP}"
+    docker run --restart unless-stopped --cpu-period=100000 --cpu-quota=200000 -it -d -m 2560m \
+      -v ${DATA_DIR}/manmon_${APP}/logs:/home/manmon_${APP}/tomcat/logs \
+      -v ${DATA_DIR}/manmon_${APP}/.auth/:/home/manmon_${APP}/.auth \
+      -v ${DATA_DIR}/manmon_${APP}/webapps:/home/manmon_${APP}/tomcat/webapps \
+      -v ${DATA_DIR}/java-agent/manmon-${APP}:/var/lib/manmon-java-agent/manmon_${APP} \
+      --net manmon --ip ${IP_PREFIX}.${IP_END} --name manmon-${APP} manmon/manmon-${APP}:latest >/dev/null 2>/dev/null
+    if [ "$?" -ne 0 ]
+    then
+      echo "Error creating container manmon-${APP}"
+      exit 1
+    else
+      echo "Created container manmon-${APP}"
+    fi
+    download-war "$APP"
+  fi
+}
+
 
 create-uploader-container() {
   APP="uploader"
@@ -139,7 +166,7 @@ create-uploader-container() {
       -v ${DATA_DIR}/manmon_${APP}/.auth/:/home/manmon_${APP}/.auth \
       -v ${DATA_DIR}/manmon_${APP}/conf:/home/manmon_${APP}/conf \
       -v ${DATA_DIR}/manmon_${APP}/webapps:/home/manmon_${APP}/tomcat/webapps \
-      -v ${DATA_DIR}/java-agent/manmon_${APP}:/var/lib/manmon-java-agent/manmon_${APP} \
+      -v ${DATA_DIR}/java-agent/manmon-${APP}:/var/lib/manmon-java-agent/manmon_${APP} \
       --net manmon --ip ${IP_PREFIX}.${IP_END} --name manmon-${APP} manmon/manmon-${APP}:latest >/dev/null 2>/dev/null
     if [ "$?" -ne 0 ]
     then
@@ -304,9 +331,13 @@ create-zookeeper-dirs() {
   chmod 700 ${DATA_DIR}/manmon_zookeeper
   chmod 700 ${DATA_DIR}/manmon_zookeeper/data
   chmod 700 ${DATA_DIR}/manmon_zookeeper/logs
+  mkdir -p ${DATA_DIR}/java-agent/manmon-zookeeper
+  chown 100002 ${DATA_DIR}/java-agent/manmon-zookeeper
+  chmod 700 ${DATA_DIR}/java-agent/manmon-zookeeper
   if $SELINUXENABLED
   then
     chcon -Rt svirt_sandbox_file_t ${DATA_DIR}/manmon_zookeeper/
+    chcon -Rt svirt_sandbox_file_t ${DATA_DIR}/java-agent/manmon-zookeeper/
   fi
 }
 
@@ -316,7 +347,9 @@ create-zookeeper() {
     echo "Container manmon-zookeeper exists already - not creating"
   else
     create-zookeeper-dirs
-    docker run --restart unless-stopped --cpu-period=100000 --cpu-quota=10000 --net manmon --ip ${IP_PREFIX}.21 -it -d -m 128m -v ${DATA_DIR}/manmon_zookeeper/data:/home/manmon_zk/data -v ${DATA_DIR}/manmon_zookeeper/logs:/home/manmon_zk/zookeeper/logs --name manmon-zookeeper manmon/manmon-zookeeper >/dev/null  2>/dev/null
+    docker run --restart unless-stopped --cpu-period=100000 --cpu-quota=10000 --net manmon --ip ${IP_PREFIX}.21 -it -d -m 128m \
+      -v ${DATA_DIR}/java-agent/manmon-zookeeper:/var/lib/manmon-java-agent/manmon_zookeeper \
+      -v ${DATA_DIR}/manmon_zookeeper/data:/home/manmon_zk/data -v ${DATA_DIR}/manmon_zookeeper/logs:/home/manmon_zk/zookeeper/logs --name manmon-zookeeper manmon/manmon-zookeeper >/dev/null  2>/dev/null
     if [ "$?" -ne 0 ]
     then
       echo "Error creating container manmon-zookeeper"
@@ -337,16 +370,32 @@ create-kafka-dirs() {
   chmod 700 ${DATA_DIR}/manmon_kafka
   chmod 700 ${DATA_DIR}/manmon_kafka/data
   chmod 700 ${DATA_DIR}/manmon_kafka/logs
-  mkdir -p  ${DATA_DIR}/java-agent/manmon_kafka
-  chown manmon_kafka ${DATA_DIR}/java-agent/manmon_kafka
-  chmod 700 ${DATA_DIR}/java-agent/manmon_kafka
+  mkdir -p  ${DATA_DIR}/java-agent/manmon-kafka
+  chown manmon-kafka ${DATA_DIR}/java-agent/manmon-kafka
+  chmod 700 ${DATA_DIR}/java-agent/manmon-kafka
   if $SELINUXENABLED
   then
     chcon -Rt svirt_sandbox_file_t ${DATA_DIR}/manmon_kafka/
-    chcon -Rt svirt_sandbox_file_t ${DATA_DIR}/java-agent/manmon_kafka
+    chcon -Rt svirt_sandbox_file_t ${DATA_DIR}/java-agent/manmon-kafka
   fi
 }
+create-hosts-dirs-and-copy-keys() {
+  create-manmon-dirs "hosts"
+  mkdir -p ${DATA_DIR}/manmon_hosts/.auth
+  chmod 700 ${DATA_DIR}/manmon_hosts/.auth
+  chown manmon_hosts ${DATA_DIR}/manmon_hosts/.auth
 
+  if [ ! -f ${DATA_DIR}/manmon_hosts/.auth/.tomcat_constants ]
+  then
+    cp -p ${DATA_DIR}/manmon_conf/.tomcat_constants ${DATA_DIR}/manmon_hosts/.auth/.tomcat_constants
+    chown manmon_hosts ${DATA_DIR}/manmon_hosts/.auth/.tomcat_constants
+    chmod 400 ${DATA_DIR}/manmon_hosts/.auth/.tomcat_constants
+  fi
+  if $SELINUXENABLED
+  then
+    chcon -Rt svirt_sandbox_file_t ${DATA_DIR}/manmon_hosts/
+  fi
+}
 
 create-uploader-dirs-and-copy-keys() {
   mkdir -p ${DATA_DIR}/manmon_uploader/.auth
@@ -363,6 +412,9 @@ create-uploader-dirs-and-copy-keys() {
   chown 100006 ${DATA_DIR}/manmon_uploader
   chown 100006 ${DATA_DIR}/manmon_uploader/webapps
   chown 100006 ${DATA_DIR}/manmon_uploader/logs
+  mkdir -p ${DATA_DIR}/java-agent/manmon-uploader
+  chmod 700 ${DATA_DIR}/java-agent/manmon-uploader
+  chown 100006 ${DATA_DIR}/java-agent/manmon-uploader
 
   if [ ! -f ${DATA_DIR}/manmon_uploader/.auth/.cacerts.jks ]
   then
@@ -393,7 +445,7 @@ if [ `docker ps -a -q -f "name=manmon-kafka$"|wc -l` -eq 1 ]
   else
     create-kafka-dirs
     docker run --restart unless-stopped --cpu-period=100000 --cpu-quota=100000 --net manmon --ip ${IP_PREFIX}.22 -it -d -m 2048m -v ${DATA_DIR}/manmon_kafka/data:/home/manmon_kafka/data -v ${DATA_DIR}/manmon_kafka/logs:/home/manmon_kafka/kafka/logs \
-      -v ${DATA_DIR}/java-agent/manmon_kafka:/var/lib/manmon-java-agent/manmon_kafka \
+      -v ${DATA_DIR}/java-agent/manmon-kafka:/var/lib/manmon-java-agent/manmon_kafka \
       --name manmon-kafka manmon/manmon-kafka >/dev/null  2>/dev/null 
     if [ "$?" -ne 0 ]
     then
@@ -413,16 +465,17 @@ create-data-loader() {
   else
     create-data-loader-dirs
     download-manmon-data-loader 
-    docker run --restart unless-stopped --cpu-period=100000 --cpu-quota=50000 --net manmon --ip ${IP_PREFIX}.26 -it -d -m 128m \
+    docker run --restart unless-stopped --cpu-period=100000 --cpu-quota=50000 --net manmon --ip ${IP_PREFIX}.26 -it -d -m 1150m \
       -v ${DATA_DIR}/manmon_data_loader/logs:/home/manmon_data_loader/logs \
+      -v ${DATA_DIR}/java-agent/manmon-data-loader:/var/lib/manmon-java-agent/manmon_data_loader \
       -v ${DATA_DIR}/manmon_data_loader/jar:/home/manmon_data_loader/jar \
       --name manmon-data-loader manmon/manmon-data-loader >/dev/null  2>/dev/null
     if [ "$?" -ne 0 ]
     then
-      echo "Error creating container manmon-zookeeper"
+      echo "Error creating container manmon-data-loader"
       exit 1
     else
-      echo "Created container manmon-zookeeper"
+      echo "Created container manmon-data-loader"
     fi
   fi
 }
@@ -438,15 +491,19 @@ create-data-loader-dirs() {
   mkdir -p ${DATA_DIR}/manmon_${DIRAPP}/logs
   chmod 700 ${DATA_DIR}/manmon_${DIRAPP}/logs
   chown manmon_${DIRAPP} ${DATA_DIR}/manmon_${DIRAPP}/logs
+  mkdir -p ${DATA_DIR}/java-agent/manmon-${DIRAPP}
+  chown manmon_${DIRAPP} ${DATA_DIR}/java-agent/manmon-${DIRAPP}
+  chmod 700 ${DATA_DIR}/java-agent/manmon-${DIRAPP}
   if $SELINUXENABLED
   then
     chcon -Rt svirt_sandbox_file_t ${DATA_DIR}/manmon_${DIRAPP}
+    chcon -Rt svirt_sandbox_file_t ${DATA_DIR}/java-agent/manmon-${DIRAPP}
   fi
 }
 
 download-manmon-data-loader() {
   echo "Downloading data loader JAR"
-  wget -q -O ${DATA_DIR}/manmon_data_loader/jar/manmon-dbloader.jar https://manmon.net/war/manmon-dbloader-0.0.1-SNAPSHOT-jar-with-dependencies.jar
+  wget -q -O ${DATA_DIR}/manmon_data_loader/jar/manmon-dbloader.jar https://manmon.net/war/manmon-dbloader.jar
 }
 
 create-users() {
