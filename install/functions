@@ -83,7 +83,7 @@ create-manmon-dirs() {
   chown manmon_${DIRAPP} ${DATA_DIR}/java-agent/manmon-${DIRAPP}
   if $SELINUXENABLED
   then
-    chcon -Rt svirt_sandbox_file_t ${DATA_DIR}/manmon_${DIRAPP}
+    chcon -Rt svirt_sandbox_file_t ${DATA_DIR}/manmon-${DIRAPP}
     chcon -Rt svirt_sandbox_file_t ${DATA_DIR}/java-agent/manmon_${DIRAPP}
   fi
 }
