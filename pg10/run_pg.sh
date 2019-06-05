@@ -18,6 +18,7 @@ then
   echo "listen_addresses='*'" >> /var/lib/postgresql/10/main/postgresql.conf
   /usr/lib/postgresql/10/bin/postgres -D /var/lib/postgresql/10/main -c config_file=/var/lib/postgresql/10/main/postgresql.conf &
   PGPID=$!
+  sleep 3
   psql --command "CREATE USER ${MMPGUSER} WITH ENCRYPTED PASSWORD '${MMPGPWD}'" postgres
   createdb -O $MMPGUSER $MMPGUSER
   kill $PGPID

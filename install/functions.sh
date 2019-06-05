@@ -64,6 +64,10 @@ download-war() {
      echo "Error downloading WAR for ${DLAPP}"
      exit 1
    fi
+   if $SELINUXENABLED
+   then
+     chcon -Rt svirt_sandbox_file_t "${DATA_DIR}/manmon_${DLAPP}/webapps/manmon-${DLAPP}.war"
+   fi
 }
 
 
@@ -83,14 +87,14 @@ create-manmon-dirs() {
   chown manmon_${DIRAPP} ${DATA_DIR}/java-agent/manmon-${DIRAPP}
   if $SELINUXENABLED
   then
-    chcon -Rt svirt_sandbox_file_t ${DATA_DIR}/manmon-${DIRAPP}
-    chcon -Rt svirt_sandbox_file_t ${DATA_DIR}/java-agent/manmon_${DIRAPP}
+    chcon -Rt svirt_sandbox_file_t ${DATA_DIR}/manmon_${DIRAPP}
+    chcon -Rt svirt_sandbox_file_t ${DATA_DIR}/java-agent/manmon-${DIRAPP}
   fi
 }
 
 create-manmon-db-dirs() {
   DIRAPP="$1"
-  echo "Creating directories for ${DIRAPP}"
+  echo "Creating directories for ${DIRAPP}-db"
   mkdir -p ${DATA_DIR}/manmon_${DIRAPP}_db/
   chmod 700 ${DATA_DIR}/manmon_${DIRAPP}_db/
   chown manmon_${DIRAPP}_db ${DATA_DIR}/manmon_${DIRAPP}_db/
@@ -371,7 +375,7 @@ create-kafka-dirs() {
   chmod 700 ${DATA_DIR}/manmon_kafka/data
   chmod 700 ${DATA_DIR}/manmon_kafka/logs
   mkdir -p  ${DATA_DIR}/java-agent/manmon-kafka
-  chown manmon-kafka ${DATA_DIR}/java-agent/manmon-kafka
+  chown manmon_kafka ${DATA_DIR}/java-agent/manmon-kafka
   chmod 700 ${DATA_DIR}/java-agent/manmon-kafka
   if $SELINUXENABLED
   then

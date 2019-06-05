@@ -14,4 +14,5 @@ manmon-mib
 manmon-mib-db
 manmon-uploader
 manmon-uploader-db
+manmon-web
 manmon-zookeeper

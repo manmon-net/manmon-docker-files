@@ -1,5 +1,5 @@
 #!/bin/bash
-. functions
+. functions.sh
 
 echo "Creating users"
 create-users
@@ -36,3 +36,6 @@ create-uploader-container
 
 echo "Creating manmon-data-loader container"
 create-data-loader
+
+echo "Creating manmon-hosts container"
+create-hosts-container
